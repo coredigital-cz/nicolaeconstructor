@@ -1,0 +1,11 @@
+{
+  "name": "Nicolae Constructor",
+  "short_name": "Nicolae Constructor",
+  "description": "Înlocuire, montaj și reparații acoperișuri, dulgherie și hidroizolații, în județul Mehedinți.",
+  "icons": [{ "src": "/nicolaeconstructor/favicon.svg", "sizes": "any", "type": "image/svg+xml" }],
+  "theme_color": "#c43a17",
+  "background_color": "#ffffff",
+  "display": "standalone",
+  "start_url": "/nicolaeconstructor/",
+  "lang": "ro"
+}
