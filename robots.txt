@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://coredigital-cz.github.io/nicolaeconstructor/sitemap.xml
+Sitemap: https://coredigital-cz.github.io/sitemap.xml

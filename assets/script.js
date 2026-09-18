@@ -179,7 +179,7 @@
 
       var payload = {
         access_key: WEB3FORMS_ACCESS_KEY,
-        subject: "Solicitare ofertă — coredigital-cz.github.io/nicolaeconstructor",
+        subject: "Solicitare ofertă — acoperisservicii.ro",
         from_name: nume,
         Nume: nume,
         Telefon: tel,
@@ -331,7 +331,7 @@
 
       var payload = {
         access_key: WEB3FORMS_ACCESS_KEY,
-        subject: "Calculator preț — coredigital-cz.github.io/nicolaeconstructor",
+        subject: "Calculator preț — acoperisservicii.ro",
         from_name: nume,
         Nume: nume,
         Telefon: tel,
