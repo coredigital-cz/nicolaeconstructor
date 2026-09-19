@@ -171,6 +171,21 @@
     }
   }
 
+  /* buton scurt: prima apasare deschide campurile optionale, nu trimite direct */
+  document.querySelectorAll("form[data-lead] [data-quick]").forEach(function (qbtn) {
+    qbtn.addEventListener("click", function (e) {
+      var form = qbtn.closest("form");
+      var more = form.querySelector(".f-more");
+      if (more && more.hidden) {
+        e.preventDefault();
+        more.hidden = false;
+        qbtn.hidden = true;
+        var next = more.querySelector("input,select");
+        if (next) next.focus();
+      }
+    });
+  });
+
   document.querySelectorAll("form[data-lead]").forEach(function (form) {
     form.addEventListener("submit", function (e) {
       e.preventDefault();
@@ -178,13 +193,13 @@
       var ok = form.querySelector(".fok");
       if (val(form, "company")) return; /* honeypot */
 
-      var nume = val(form, "nume");
+      var nume = val(form, "nume") || "Client site";
       var tel = val(form, "telefon");
       var oras = val(form, "oras");
       var lucrare = val(form, "lucrare");
       var mesaj = val(form, "mesaj");
 
-      if (nume.length < 2 || !phoneOk(tel) || oras.length < 2) {
+      if (!phoneOk(tel) || oras.length < 2) {
         if (err) err.classList.add("show");
         return;
       }
