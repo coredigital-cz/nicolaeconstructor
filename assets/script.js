@@ -155,6 +155,22 @@
     return d.length >= 9 && d.length <= 13;
   }
 
+  /* daca emailul nu pleaca, nu pierdem lead-ul: trimitem pe WhatsApp */
+  var WA_NUMBER = "40757756818";
+  function failover(form, err, nume, tel, oras, lucrare, mesaj, why) {
+    var txt = "Solicitare de pe acoperisservicii.ro%0A%0ANume: " + encodeURIComponent(nume) +
+      "%0ATelefon: " + encodeURIComponent(tel) +
+      "%0ALocalitate: " + encodeURIComponent(oras) +
+      (lucrare ? "%0ALucrare: " + encodeURIComponent(lucrare) : "") +
+      (mesaj ? "%0ADetalii: " + encodeURIComponent(mesaj) : "");
+    if (err) {
+      err.innerHTML = 'Nu am putut trimite automat solicitarea. Ap\u0103sa\u021bi butonul de mai jos \u0219i v\u0103 deschidem mesajul gata scris, sau suna\u021bi la <a href="tel:+40757756818"><b>0757 756 818</b></a>.' +
+        '<br><a class="btn btn-p btn-sm" style="margin-top:10px" target="_blank" rel="noopener" href="https://wa.me/' + WA_NUMBER + '?text=' + txt + '">Trimite\u021bi pe WhatsApp</a>' +
+        '<br><small style="opacity:.6">cod: ' + String(why).slice(0, 60) + '</small>';
+      err.classList.add("show");
+    }
+  }
+
   document.querySelectorAll("form[data-lead]").forEach(function (form) {
     form.addEventListener("submit", function (e) {
       e.preventDefault();
@@ -200,13 +216,15 @@
             if (ok) ok.classList.add("show");
             trackConversion(GADS_LABEL_CONTACT);
             form.reset();
-          } else if (err) {
-            err.classList.add("show");
+          } else {
+            console.warn("Web3Forms:", data);
+            failover(form, err, nume, tel, oras, lucrare, mesaj, (data && data.message) || "eroare necunoscuta");
           }
         })
-        .catch(function () {
+        .catch(function (e) {
           if (btn) btn.disabled = false;
-          if (err) err.classList.add("show");
+          console.warn("Web3Forms network:", e);
+          failover(form, err, nume, tel, oras, lucrare, mesaj, "conexiune");
         });
     });
   });
