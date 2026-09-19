@@ -1,4 +1,4 @@
-/* Nicolae Constructor — script */
+/* Acoperiș Servicii — script */
 (function () {
   "use strict";
   var TEL = "0757756818";
@@ -144,7 +144,7 @@
   }
 
   /* ---------- lead forms -> email (Web3Forms) ---------- */
-  var WEB3FORMS_ACCESS_KEY = "PUNE_CHEIA_WEB3FORMS_AICI"; /* de la web3forms.com, cont creati cont Web3Forms pentru Nicolae Constructor */
+  var WEB3FORMS_ACCESS_KEY = "8d6e2e8f-ac92-482b-a4bc-0c4ed3354ebd"; /* de la web3forms.com, cont creati cont Web3Forms pentru Acoperiș Servicii */
 
   function val(form, name) {
     var f = form.querySelector('[name="' + name + '"]');
@@ -368,5 +368,100 @@
           showErr(box);
         });
     });
+  }
+})();
+
+/* ============ v2: contor, galerie, lightbox ============ */
+(function () {
+  "use strict";
+  var reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  /* --- contor animat pe statistici --- */
+  var stats = document.querySelectorAll(".stat b");
+  if (stats.length && "IntersectionObserver" in window && !reduce) {
+    var sio = new IntersectionObserver(function (es) {
+      es.forEach(function (e) {
+        if (!e.isIntersecting) return;
+        sio.unobserve(e.target);
+        var el = e.target, txt = el.textContent.trim();
+        var m = txt.match(/^(\d+)(.*)$/);
+        if (!m) return;
+        var end = parseInt(m[1], 10), suf = m[2], t0 = null, dur = 1300;
+        function step(t) {
+          if (!t0) t0 = t;
+          var p = Math.min((t - t0) / dur, 1);
+          var e2 = 1 - Math.pow(1 - p, 3);
+          el.textContent = Math.round(end * e2) + suf;
+          if (p < 1) requestAnimationFrame(step);
+        }
+        el.textContent = "0" + suf;
+        requestAnimationFrame(step);
+      });
+    }, { threshold: 0.5 });
+    stats.forEach(function (s) { sio.observe(s); });
+  }
+
+  /* --- filtru galerie --- */
+  var fil = document.querySelector(".gal-fil");
+  if (fil) {
+    fil.addEventListener("click", function (e) {
+      var b = e.target.closest("button");
+      if (!b) return;
+      var cat = b.getAttribute("data-f");
+      fil.querySelectorAll("button").forEach(function (x) { x.classList.toggle("on", x === b); });
+      document.querySelectorAll(".gal .gi").forEach(function (g) {
+        var show = cat === "all" || g.getAttribute("data-cat") === cat;
+        g.classList.toggle("hide", !show);
+      });
+    });
+  }
+
+  /* --- lightbox cu navigare --- */
+  var lb = document.getElementById("lb");
+  if (lb) {
+    var lbImg = lb.querySelector("img");
+    var cap = lb.querySelector(".lb-cap");
+    var items = [], idx = 0;
+
+    function collect() {
+      items = Array.prototype.slice.call(document.querySelectorAll(".gal .gi:not(.hide)"));
+    }
+    function show(i) {
+      if (!items.length) return;
+      idx = (i + items.length) % items.length;
+      var g = items[idx];
+      var src = g.getAttribute("data-lb") || (g.querySelector("img") && g.querySelector("img").src);
+      lbImg.src = src;
+      lbImg.alt = g.getAttribute("data-alt") || "";
+      if (cap) cap.textContent = g.getAttribute("data-alt") || "";
+      lb.style.display = "flex";
+      document.body.style.overflow = "hidden";
+    }
+    function close() {
+      lb.style.display = "none";
+      lbImg.src = "";
+      document.body.style.overflow = "";
+    }
+
+    document.addEventListener("click", function (e) {
+      var g = e.target.closest(".gal .gi");
+      if (g) { collect(); show(items.indexOf(g)); return; }
+      if (e.target.closest(".lb-p")) { show(idx - 1); return; }
+      if (e.target.closest(".lb-n")) { show(idx + 1); return; }
+      if (e.target.closest(".lb-x") || e.target === lb) close();
+    });
+    document.addEventListener("keydown", function (e) {
+      if (lb.style.display !== "flex") return;
+      if (e.key === "Escape") close();
+      if (e.key === "ArrowLeft") show(idx - 1);
+      if (e.key === "ArrowRight") show(idx + 1);
+    });
+    /* swipe pe mobil */
+    var sx = 0;
+    lb.addEventListener("touchstart", function (e) { sx = e.touches[0].clientX; }, { passive: true });
+    lb.addEventListener("touchend", function (e) {
+      var d = e.changedTouches[0].clientX - sx;
+      if (Math.abs(d) > 45) show(idx + (d < 0 ? 1 : -1));
+    }, { passive: true });
   }
 })();
